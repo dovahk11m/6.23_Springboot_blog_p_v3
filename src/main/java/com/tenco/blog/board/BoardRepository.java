@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,25 @@ public class BoardRepository {
 
     private final EntityManager em;
 
+
+
+
+
+
+    /**
+     * 게시글 저장: User 와 연관관계를 가진 Board 엔티티 영속화
+     * @param board
+     * @return
+     */
+    @Transactional
+    public Board save(Board board) {
+        em.persist(board);
+        return board;
+    }
+    /* 비영속 상태의 Board 오브젝트를 영속성 컨텍스트에 저장하면
+    이후에는 같은 메모리주소를 가리키게 된다
+    엔티티매니저는 워낙 안정적이라 단위테스트를 안해도 된다
+     */
 
     /**
      * 게시글 1건 조회

@@ -1,5 +1,7 @@
 package com.tenco.blog.user;
 
+import com.tenco.blog.board.Board;
+import com.tenco.blog.board.BoardRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,13 @@ public class UserController {
 
     //HttpSession 이 인터페이스를 통해 세션메모리에 접근
     private final HttpSession httpSession;
+
+
+
+
+
+
+
 
 
     /**
