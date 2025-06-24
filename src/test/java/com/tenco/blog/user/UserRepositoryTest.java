@@ -13,6 +13,19 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository ur;
 
+
+    @Test
+    public void findByUsernameAndPassword_로그인테스트() {
+        //given
+        String username = "ssar";
+        String password = "1234";
+        //when
+        User user = ur.findByUsernameAndPassword(username, password);
+        //then
+        Assertions.assertThat(user).isNotNull();
+        Assertions.assertThat(user.getUsername()).isEqualTo("ssar");
+    }
+
     @Test
     public void findByUsername_존재하지않는사용자테스트() {
         //given
