@@ -15,6 +15,34 @@ public class UserController {
     //HttpSession 이 인터페이스를 통해 세션메모리에 접근
     private final HttpSession httpSession;
 
+    //회원정보 수정 액션 처리
+    @PostMapping("/user/update")
+    public String update(UserRequest.UpdateDTO reqDTO,
+                         HttpSession session, HttpServletRequest request) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        reqDTO.validate();
+        User updateUser = ur.updateById(sessionUser.getId(),reqDTO);
+
+        //세션 동기화
+        session.setAttribute("sesstionUser", updateUser);
+
+        return "redirect:/user/update-form";
+    }
+    /* 회원정보 수정 액션의 흐름
+    1.세션에서 회원정보 가져오기
+    2.인증 검사
+    3.유효성 검사
+
+     */
+
+
+
+
+
+
     /**
      * 회원가입 화면 요청
      *
@@ -108,8 +136,14 @@ public class UserController {
 
     // update 화면 요청
     @GetMapping("/user/update-form")
-    public String updateForm() {
-
+    public String updateForm(HttpServletRequest request, HttpSession hs) {
+        // 1. login check
+        User sUser = (User) hs.getAttribute("sessionUser");
+        if(sUser == null) {
+            return "redirect:/login-form";
+        }
+        request.setAttribute("user", sUser);
         return "user/update-form";
     }
+
 }//UserController

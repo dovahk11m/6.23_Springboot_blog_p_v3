@@ -15,6 +15,22 @@ public class BoardRepository {
 
     private final EntityManager em;
 
+    //수정 요청 feat.더티체킹
+    @Transactional
+    public Board updateById(Long id, BoardRequest.UpdateDTO reqDTO) {
+        //1.수정할 게시글을 영속상태로 조회
+        Board board = findById(id);
+        board.setTitle(reqDTO.getTitle());
+        board.setContent(reqDTO.getContent());
+        return board;
+    }//updateById
+    /* 더티체킹 흐름
+    1.영속성 컨텍스트가 엔티티 최초 조회 상태를 스냅샷으로 보관
+    2.필드값 변경시 현재상태와 스냅샷 비교
+    3.트랜잭션 커밋시점에 변경된 필드만 UPDATE 쿼리 자동 시전
+     */
+
+
     //게시글 삭제 - JPQL
     @Transactional
     public void deleteById(Long id) {

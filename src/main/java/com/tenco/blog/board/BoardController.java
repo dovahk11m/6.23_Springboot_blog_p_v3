@@ -18,8 +18,94 @@ public class BoardController {
     private final BoardRepository br;
 
 
-    /*
-    게시글 삭제 요청
+    /* 회원정보 수정 화면 요청
+    http://localhost:8080/user/update-form
+    GET
+     */
+    public String updateForm(HttpServletRequest request, HttpSession session) {
+        User sessionUser = (User) session.getAttribute("sesseionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+
+        request.setAttribute("user", sessionUser);
+        return "/user/update-form";
+    }
+
+
+
+
+
+
+
+
+
+    /* 게시글 수정 화면 요청
+    /board/{id}/update-form
+    GET
+     */
+    @GetMapping("/board/{id}/update-form")
+    public String updateForm(@PathVariable(name = "id") Long boardId,
+                             HttpServletRequest request, HttpSession session) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        Board board = br.findById(boardId);
+        if (board == null) {
+            throw new RuntimeException("게시글이 없습니다");
+        }
+        if (!board.isOwner(sessionUser.getId())) {
+            throw new RuntimeException("수정 권한이 없습니다");
+        }
+        request.setAttribute("board", board);
+        return "/board/update-form";
+    }
+    /* 수정요청의 흐름
+    1.세션에서 회원 정보 불러오기
+    2.인증검사
+    3.게시글 존재 확인
+    4.권한체크
+    5.스프링컨테이너 내부에서 뷰리졸버를 통해 머스테치 파일 찾기
+     */
+
+    /* 수정 액션 요청
+    /board/5/update-form
+    POST
+     */
+    @PostMapping("/board/{id}/update-form")
+    public String update(@PathVariable(name = "id")Long boardId,
+                         HttpSession session, BoardRequest.UpdateDTO reqDTO) {
+
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        reqDTO.validate();
+        Board board = br.findById(boardId);
+        if (board == null) {
+            throw new IllegalArgumentException("게시물이 없습니다");
+        }
+        if (!board.isOwner(sessionUser.getId())) {
+            throw new RuntimeException("수정 권한이 없습니다");
+        }
+
+        //6 수정 (엔티티 접근해서 상태변경)
+        br.updateById(boardId, reqDTO);
+
+        return "redirect:/board/"+boardId;
+    }
+    /* 수정 액션의 흐름
+    1.세션 회원정보 확인
+    2.인증검사
+    3.유효성검사
+    4.게시글 존재 확인
+    5.권한체크
+    6.수정 & 더티체킹
+    7.리다이렉트
+     */
+
+    /* 게시글 삭제 요청
     /board/{{board.id}}/delete
     POST
      */
@@ -45,7 +131,7 @@ public class BoardController {
     }
     /* 삭제의 흐름
     1.세션에서 회원 정보 불러오기
-    2.로그인 여부 확인 (인증검사) 비로그인이면 리다이렉트
+    2.인증검사
     3.게시글 존재 확인
     4.권한체크
     5.삭제

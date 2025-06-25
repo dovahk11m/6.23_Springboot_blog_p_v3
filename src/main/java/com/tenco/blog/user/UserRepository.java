@@ -1,6 +1,9 @@
 package com.tenco.blog.user;
+import com.tenco.blog.board.Board;
+import com.tenco.blog.board.BoardRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRepository {
 
     private final EntityManager em;
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public User findById(Long id) {
+        User user = em.find(User.class, id);
+        if (user == null) {
+            throw new RuntimeException("사용자를 찾을 수 없습니다");
+        }
+        return user;
+    }
+
 
     /**
      * 로그인 요청 (회원 정보 조회)
@@ -61,5 +78,13 @@ public class UserRepository {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Transactional
+    public User updateById(Long id, UserRequest.UpdateDTO reqDTO) {
+        //조회, 객체 상태값 변경, 트랜잭션
+        User user = findById(id);
+        user.setPassword(reqDTO.getPassword());
+        return user; //수정된 엔티티 반환 for 세션동기화
     }
 }//class
