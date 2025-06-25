@@ -1,14 +1,10 @@
 package com.tenco.blog.user;
-
-import com.tenco.blog.board.Board;
-import com.tenco.blog.board.BoardRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RequiredArgsConstructor //DI
 @Controller
@@ -18,14 +14,6 @@ public class UserController {
 
     //HttpSession 이 인터페이스를 통해 세션메모리에 접근
     private final HttpSession httpSession;
-
-
-
-
-
-
-
-
 
     /**
      * 회원가입 화면 요청
@@ -68,7 +56,6 @@ public class UserController {
             return "user/join-form";
         }
     }//join
-
 
     /**
      * 로그인 화면 요청
@@ -119,12 +106,10 @@ public class UserController {
         return "redirect:/";
     }
 
-
     // update 화면 요청
     @GetMapping("/user/update-form")
     public String updateForm() {
 
         return "user/update-form";
     }
-
-}
+}//UserController

@@ -1,5 +1,4 @@
 package com.tenco.blog.user;
-
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -35,4 +34,4 @@ public class User {
         this.email = email;
         this.createdAt = createdAt;
     }
-}//
+}//User

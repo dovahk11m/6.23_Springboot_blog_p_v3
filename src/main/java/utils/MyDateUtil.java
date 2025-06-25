@@ -1,5 +1,4 @@
 package utils;
-
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.sql.Timestamp;
@@ -23,5 +22,4 @@ public class MyDateUtil {
         //아파치 Commons 라이브러리 활용
         return DateFormatUtils.format(currentDate, "yyyy-MM-dd HH:mm");
     }
-
-}//
+}//MyDateUtil

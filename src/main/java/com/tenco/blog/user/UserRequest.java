@@ -1,5 +1,4 @@
 package com.tenco.blog.user;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +25,6 @@ public class UserRequest {
                     .email(this.email)
                     .build();
         }
-
         //여기에 회원가입시 유효성 검사 메서드도 넣었다
         public void validate() {
             if (username == null || username.trim().isEmpty()) {
@@ -40,7 +38,6 @@ public class UserRequest {
                 throw new IllegalArgumentException("잘못된 이메일 형식입니다");
             }
         }
-
     }//JoinDTO
 
     //로그인용 DTO
@@ -61,10 +58,6 @@ public class UserRequest {
                 throw new IllegalArgumentException("비밀번호는 필수입니다");
             }
         }
-
     }//LoginDTO
-
-
-
 
 }//UserRequest

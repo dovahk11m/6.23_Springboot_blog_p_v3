@@ -1,5 +1,4 @@
 package com.tenco.blog.board;
-
 import com.tenco.blog.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -17,6 +16,41 @@ public class BoardController {
 
     //DI 처리
     private final BoardRepository br;
+
+
+    /*
+    게시글 삭제 요청
+    /board/{{board.id}}/delete
+    POST
+     */
+    @PostMapping("/board/{id}/delete")
+    public String delete(@PathVariable(name = "id") Long id,HttpSession session ,HttpServletRequest request) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/login-form";
+        }
+        Board board = br.findById(id);
+        if (board == null) {
+            throw new IllegalArgumentException("이미 삭제된 게시글입니다");
+        }
+        if (!board.isOwner(sessionUser.getId())) {
+            throw new RuntimeException("삭제 권한이 없습니다");
+        }
+
+//        if (!(sessionUser.getId() == board.getUser().getId())) {
+//            throw new RuntimeException("삭제 권한이 없습니다");
+//        }
+        br.deleteById(id);
+        return "redirect:/";
+    }
+    /* 삭제의 흐름
+    1.세션에서 회원 정보 불러오기
+    2.로그인 여부 확인 (인증검사) 비로그인이면 리다이렉트
+    3.게시글 존재 확인
+    4.권한체크
+    5.삭제
+    6.리다이렉트
+     */
 
     /**
      * 게시글 작성창 요청
@@ -41,17 +75,17 @@ public class BoardController {
     public String save(BoardRequest.saveDTO reqDTO, HttpSession session) {
 
         try {
-        //1.권한체크
-        User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            return "redirect:/login-form"; //세션 정보 없으면 리다이렉트
-        }
-        //2.유효성 검사
-        reqDTO.validate();
-        //3.SaveDTO 저장시키기 위해 Board 변환을 해준다
-        //Board board = reqDTO.toEntity(sessionUser);
-        br.save(reqDTO.toEntity(sessionUser));
-        return "redirect:/";
+            //1.권한체크
+            User sessionUser = (User) session.getAttribute("sessionUser");
+            if (sessionUser == null) {
+                return "redirect:/login-form"; //세션 정보 없으면 리다이렉트
+            }
+            //2.유효성 검사
+            reqDTO.validate();
+            //3.SaveDTO 저장시키기 위해 Board 변환을 해준다
+            //Board board = reqDTO.toEntity(sessionUser);
+            br.save(reqDTO.toEntity(sessionUser));
+            return "redirect:/";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,10 +93,9 @@ public class BoardController {
         }
     }
 
-
     /**
      * 게시글 상세보기 화면 요청
-     * @param id - 게시글 PK
+     * @param id 게시글 PK
      * @param request (뷰에 데이터 전달)
      * @return detail.mustache
      */
@@ -75,7 +108,6 @@ public class BoardController {
         return "board/detail";
     }//detail
 
-
     @GetMapping("/")
     public String index(HttpServletRequest request) {
 
@@ -87,5 +119,5 @@ public class BoardController {
         request.setAttribute("boardList", boardList);
 
         return "index";
-    }//
-}//
+    }
+}//BoardController

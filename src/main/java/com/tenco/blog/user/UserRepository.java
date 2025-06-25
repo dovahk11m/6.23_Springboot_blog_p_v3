@@ -1,5 +1,4 @@
 package com.tenco.blog.user;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRepository {
 
     private final EntityManager em;
-
 
     /**
      * 로그인 요청 (회원 정보 조회)
@@ -31,7 +29,6 @@ public class UserRepository {
             return null; //로그인 실패
         }
     }//findByUsernameAndPassword
-
 
     /**
      * 회원정보 저장 처리
@@ -65,5 +62,4 @@ public class UserRepository {
             return null;
         }
     }
-
 }//class
